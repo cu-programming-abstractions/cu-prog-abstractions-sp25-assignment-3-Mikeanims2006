@@ -1,13 +1,31 @@
 #include "SpeakingRecursian.h"
+#include "vector.h"
+#include <string>
+#include "error.h"
 using namespace std;
 
-Vector<string> allRecursianWords(int numSyllables) {
-    /* TODO: Delete this comment and the next few lines, then implement
-     * this function.
-     */
-    (void) numSyllables;
-    return { };
+    Vector<string> allRecursianWords(int numSyllables) {
+        static const Vector<string> SYLLABLES = {
+            "'e", "'i", "'u", "be", "bi", "bu", "e", "i",
+            "ke", "ki", "ku", "ne", "ni", "nu", "re", "ri",
+            "ru", "se", "si", "su", "u"
+        };
+
+    if (numSyllables < 0) error("Number of syllables can't be negative.");
+    if (numSyllables == 0) return { "" };
+
+    Vector<string> result;
+    Vector<string> shorterWords = allRecursianWords(numSyllables - 1);
+
+    for (const string& word : shorterWords) {
+        for (const string& syllable : SYLLABLES) {
+            result += word + syllable;
+        }
+    }
+
+    return result;
 }
+
 
 
 /* * * * * Test Cases Below This Point * * * * */
@@ -54,12 +72,12 @@ PROVIDED_TEST("allRecursianWords has the right quantities of words.") {
 }
 
 namespace {
-    bool isConsonant(char ch) {
-        return ch == 'b' || ch == 'k' || ch == 'n' || ch == 'r' || ch == 's' || ch == '\'';
-    }
-    bool isVowel(char ch) {
-        return ch == 'e' || ch == 'i' || ch == 'u';
-    }
+bool isConsonant(char ch) {
+    return ch == 'b' || ch == 'k' || ch == 'n' || ch == 'r' || ch == 's' || ch == '\'';
+}
+bool isVowel(char ch) {
+    return ch == 'e' || ch == 'i' || ch == 'u';
+}
 }
 
 PROVIDED_TEST("allRecursianWords produces words consisting of consonants and vowels.") {

@@ -2,10 +2,47 @@
 using namespace std;
 
 Vector<Rectangle> makeTemple(const Rectangle& bounds, const TempleParameters& params) {
-    /* TODO: Delete this comment and the next few lines, then implement this function. */
-    (void) bounds;
-    (void) params;
-    return { };
+    if (params.order == 0) return {};
+
+    Vector<Rectangle> result;
+
+    // Base rectangle
+    double baseW = bounds.width * params.baseWidth;
+    double baseH = bounds.height * params.baseHeight;
+    double baseX = bounds.x + (bounds.width - baseW) / 2;
+    double baseY = bounds.y + bounds.height - baseH;
+    result += Rectangle{ int(baseX), int(baseY), int(baseW), int(baseH) };
+
+    // Column rectangle
+    double colW = bounds.width * params.columnWidth;
+    double colH = bounds.height * params.columnHeight;
+    double colX = bounds.x + (bounds.width - colW) / 2;
+    double colY = baseY - colH;
+    result += Rectangle{ int(colX), int(colY), int(colW), int(colH) };
+
+    // Upper temple rectangle
+    double templeH = bounds.height * params.upperTempleHeight;
+    double templeY = colY - templeH;
+    Rectangle upperBounds = { bounds.x, int(templeY), bounds.width, int(templeH) };
+
+    // Recursively draw upper temple
+    TempleParameters nextParams = params;
+    nextParams.order -= 1;
+    result += makeTemple(upperBounds, nextParams);
+
+    // Draw smaller temples on sides
+    double smallW = bounds.width * params.smallTempleWidth;
+    double smallH = bounds.height * params.smallTempleHeight;
+    double spacing = (bounds.width - (params.numSmallTemples * smallW)) / (params.numSmallTemples + 1);
+    double smallY = bounds.y + bounds.height - smallH;
+
+    for (int i = 0; i < params.numSmallTemples; i++) {
+        double smallX = bounds.x + spacing * (i + 1) + smallW * i;
+        Rectangle smallRect = { int(smallX), int(smallY), int(smallW), int(smallH) };
+        result += makeTemple(smallRect, nextParams);
+    }
+
+    return result;
 }
 
 

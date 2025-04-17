@@ -2,5 +2,8 @@
 
 #include "vector.h"
 #include <string>
+using namespace std;
 
-Vector<std::string> allRecursianWords(int numSyllables);
+Vector<string> allRecursianWords(int numSyllables);
+
+
